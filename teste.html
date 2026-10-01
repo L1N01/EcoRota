@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Teste Supabase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-10 bg-slate-100">
+    <div class="max-w-md mx-auto bg-white p-6 rounded-xl shadow">
+        <h1 class="text-xl font-bold mb-4">Teste de Inserção Direta</h1>
+        <button onclick="testarEnvio()" class="w-full bg-emerald-600 text-white p-3 rounded-lg font-bold">Enviar Teste para o Supabase</button>
+        <p id="status" class="mt-4 text-sm text-slate-600"></p>
+    </div>
+
+    <script>
+        const URL_SUPABASE = 'https://dihojkagllujywjpask.supabase.co';
+        const KEY_SUPABASE = 'sb_publishable_nm-0nBGAQgyFKkM1RT7Uig_5JLdNQvH';
+
+        async function testarEnvio() {
+            const statusEl = document.getElementById('status');
+            statusEl.innerText = 'A enviar...';
+
+            try {
+                const res = await fetch(`${URL_SUPABASE}/rest/v1/pontos_coleta`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': KEY_SUPABASE,
+                        'Authorization': `Bearer ${KEY_SUPABASE}`,
+                        'Prefer': 'return=minimal'
+                    },
+                    body: JSON.stringify({
+                        responsavel: "Teste Direto",
+                        tipo_gerador: "Comércio Local / Loja",
+                        endereco: "Rua Teste, 123",
+                        bairro: "Centro",
+                        materiais: "Papel"
+                    })
+                });
+
+                if (res.ok) {
+                    statusEl.innerText = 'SUCESSO! Dado inserido no Supabase!';
+                    statusEl.className = 'mt-4 text-sm font-bold text-emerald-600';
+                } else {
+                    const txt = await res.text();
+                    statusEl.innerText = 'Erro da API: ' + txt;
+                    statusEl.className = 'mt-4 text-sm font-bold text-red-600';
+                }
+            } catch (err) {
+                statusEl.innerText = 'Erro de Rede/DNS: ' + err.message;
+                statusEl.className = 'mt-4 text-sm font-bold text-red-600';
+            }
+        }
+    </script>
+</body>
+</html>
