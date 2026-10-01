@@ -172,13 +172,13 @@
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Configuração do Supabase isolada e limpa -->
     <script>
-     
-    // Configuração oficial do Supabase
-    const SUPABASE_URL = 'https://dihojkagllujywqpask.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_nm-0nBGAQgyFKkM1RT7Uig_5JLdNQvH';
+        const SUPABASE_URL = 'https://dihojkagllujywqpask.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_nm-0nBGAQgyFKkM1RT7Uig_5JLdNQvH';
 
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         function switchTab(tab) {
             ['cadastro', 'painel', 'rota'].forEach(t => {
@@ -195,7 +195,6 @@
             }
         }
 
-        // Função assíncrona para salvar no Supabase
         async function handleCadastrar(e) {
             e.preventDefault();
 
