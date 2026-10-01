@@ -3,237 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoRota Curitiba - Gestão Sustentável de Reciclagem</title>
-    <!-- Tailwind CSS para estilização rápida e moderna -->
+    <title>EcoRota Curitiba - Gestão Sustentável de Resíduos</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Leaflet CSS para o Mapa -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <!-- Supabase JS Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        #map { height: 350px; }
-    </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+<body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
 
-    <!-- Header / Navegação -->
+    <!-- Header -->
     <header class="bg-emerald-700 text-white shadow-md">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-2">
                 <span class="text-xl font-bold tracking-wide">EcoRota Curitiba</span>
             </div>
             <nav class="space-x-4">
-                <button onclick="switchTab('cadastro')" id="btn-cadastro" class="px-3 py-2 rounded-lg bg-emerald-800 text-white font-medium text-sm transition">Cadastrar Ponto</button>
-                <button onclick="switchTab('painel')" id="btn-painel" class="px-3 py-2 rounded-lg hover:bg-emerald-600 text-emerald-100 font-medium text-sm transition">Painel de Coleta</button>
-                <button onclick="switchTab('rota')" id="btn-rota" class="px-3 py-2 rounded-lg hover:bg-emerald-600 text-emerald-100 font-medium text-sm transition">Rotas Otimizadas</button>
+                <a href="index.html" class="px-3 py-2 rounded-lg bg-emerald-800 text-white font-medium text-sm transition">Início</a>
+                <a href="cadastro.html" class="px-3 py-2 rounded-lg hover:bg-emerald-600 text-emerald-100 font-medium text-sm transition">Acessar Sistema</a>
             </nav>
         </div>
     </header>
 
-    <!-- Conteúdo Principal -->
-    <main class="max-w-7xl mx-auto px-4 py-8">
-
-        <!-- SEÇÃO 1: CADASTRO DE GERADOR -->
-        <section id="tab-cadastro" class="space-y-6">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <h2 class="text-xl font-bold text-slate-900 mb-1">Cadastro de Ponto de Coleta (Gerador)</h2>
-                <p class="text-sm text-slate-500 mb-6">Condomínios residenciais e pequenos comércios de Curitiba podem cadastrar materiais recicláveis disponíveis.</p>
-                
-                <form id="form-cadastro" onsubmit="handleCadastrar(event)" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Nome do Responsável / Estabelecimento</label>
-                        <input type="text" id="responsavel" required placeholder="Ex: Condomínio Solar / Mercearia do Bairro" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Tipo de Gerador</label>
-                        <select id="tipo_gerador" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-sm bg-white">
-                            <option>Condomínio Residencial</option>
-                            <option>Comércio Local / Loja</option>
-                            <option>Escola / Instituição</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Endereço em Curitiba</label>
-                        <input type="text" id="endereco" required placeholder="Ex: R. XV de Novembro, 1200" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Bairro</label>
-                        <select id="bairro" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-sm bg-white">
-                            <option>Centro</option>
-                            <option>Água Verde</option>
-                            <option>Batel</option>
-                            <option>Centro Cívico</option>
-                            <option>Juvevê</option>
-                            <option>Santa Felicidade</option>
-                        </select>
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Materiais Disponíveis para Coleta</label>
-                        <div class="flex flex-wrap gap-4">
-                            <label class="flex items-center space-x-2 text-sm"><input type="checkbox" name="materiais" value="Papel / Papelão" class="rounded text-emerald-600 focus:ring-emerald-500"> <span>Papel / Papelão</span></label>
-                            <label class="flex items-center space-x-2 text-sm"><input type="checkbox" name="materiais" value="Plástico" class="rounded text-emerald-600 focus:ring-emerald-500"> <span>Plástico</span></label>
-                            <label class="flex items-center space-x-2 text-sm"><input type="checkbox" name="materiais" value="Vidro" class="rounded text-emerald-600 focus:ring-emerald-500"> <span>Vidro</span></label>
-                            <label class="flex items-center space-x-2 text-sm"><input type="checkbox" name="materiais" value="Metal / Alumínio" class="rounded text-emerald-600 focus:ring-emerald-500"> <span>Metal / Alumínio</span></label>
-                            <label class="flex items-center space-x-2 text-sm"><input type="checkbox" name="materiais" value="Eletrônicos" class="rounded text-emerald-600 focus:ring-emerald-500"> <span>Eletrônicos</span></label>
-                        </div>
-                    </div>
-                    <div class="md:col-span-2 flex justify-end">
-                        <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-6 py-2.5 rounded-lg text-sm transition shadow-sm">Cadastrar Ponto de Coleta</button>
-                    </div>
-                </form>
-            </div>
-        </section>
-
-        <!-- SEÇÃO 2: PAINEL DE DEMANDAS -->
-        <section id="tab-painel" class="hidden space-y-6">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <div class="flex justify-between items-center mb-6">
-                    <div>
-                        <h2 class="text-xl font-bold text-slate-900">Painel de Demandas (Catadores e Cooperativas)</h2>
-                        <p class="text-sm text-slate-500">Pontos de reciclagem disponíveis para recolhimento na região de Curitiba.</p>
-                    </div>
-                    <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-3 py-1 rounded-full">3 Pontos Ativos</span>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between">
-                        <div>
-                            <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Água Verde</span>
-                            <h3 class="font-bold text-slate-800 text-lg mt-1">Condomínio Solar</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">Rua Curupaitis, 450</p>
-                            <div class="mt-4 flex flex-wrap gap-1">
-                                <span class="bg-white border border-slate-200 text-slate-700 text-xs px-2 py-0.5 rounded">Papelão</span>
-                                <span class="bg-white border border-slate-200 text-slate-700 text-xs px-2 py-0.5 rounded">Vidro</span>
-                            </div>
-                            <p class="text-xs text-slate-600 mt-3 font-medium">Volume Estimado: ~45 kg</p>
-                        </div>
-                        <button onclick="alert('Coleta aceita com sucesso! Rota adicionada.')" class="mt-5 w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-2 rounded-lg transition">Aceitar Coleta</button>
-                    </div>
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between">
-                        <div>
-                            <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Centro Cívico</span>
-                            <h3 class="font-bold text-slate-800 text-lg mt-1">Comércio Central</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">Av. Cândido de Abreu, 520</p>
-                            <div class="mt-4 flex flex-wrap gap-1">
-                                <span class="bg-white border border-slate-200 text-slate-700 text-xs px-2 py-0.5 rounded">Plástico</span>
-                                <span class="bg-white border border-slate-200 text-slate-700 text-xs px-2 py-0.5 rounded">Metal</span>
-                            </div>
-                            <p class="text-xs text-slate-600 mt-3 font-medium">Volume Estimado: ~80 kg</p>
-                        </div>
-                        <button onclick="alert('Coleta aceita com sucesso! Rota adicionada.')" class="mt-5 w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-2 rounded-lg transition">Aceitar Coleta</button>
-                    </div>
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between">
-                        <div>
-                            <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Batel</span>
-                            <h3 class="font-bold text-slate-800 text-lg mt-1">Edifício Araucária</h3>
-                            <p class="text-xs text-slate-500 mt-0.5">Rua Comendador Araújo, 310</p>
-                            <div class="mt-4 flex flex-wrap gap-1">
-                                <span class="bg-white border border-slate-200 text-slate-700 text-xs px-2 py-0.5 rounded">Eletrônicos</span>
-                                <span class="bg-white border border-slate-200 text-slate-700 text-xs px-2 py-0.5 rounded">Papel</span>
-                            </div>
-                            <p class="text-xs text-slate-600 mt-3 font-medium">Volume Estimado: ~30 kg</p>
-                        </div>
-                        <button onclick="alert('Coleta aceita com sucesso! Rota adicionada.')" class="mt-5 w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-2 rounded-lg transition">Aceitar Coleta</button>
-                    </div>
+    <!-- Hero Section -->
+    <main class="flex-grow">
+        <div class="max-w-7xl mx-auto px-4 py-12 md:py-20 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+                <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Projeto Integrador Extensionista (PIEx)</span>
+                <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 leading-tight">Inovação e Logística Sustentável para Curitiba</h1>
+                <p class="text-slate-600 text-base md:text-lg">O <strong>EcoRota Curitiba</strong> é uma plataforma digital voltada a otimizar a conexão entre geradores de resíduos recicláveis (como condomínios e comércios locais) e agentes de coleta, alinhada à <strong>ODS 9</strong> da ONU.</p>
+                <div class="flex space-x-4 pt-2">
+                    <a href="cadastro.html" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-3 rounded-xl shadow transition text-sm">Ir para o Sistema de Coleta</a>
                 </div>
             </div>
-        </section>
-
-        <!-- SEÇÃO 3: ROTA OTIMIZADA -->
-        <section id="tab-rota" class="hidden space-y-6">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <h2 class="text-xl font-bold text-slate-900 mb-1">Rotas de Coleta Otimizadas</h2>
-                <p class="text-sm text-slate-500 mb-6">Visualização geolocalizada das coletas aceitas em Curitiba.</p>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="space-y-4">
-                        <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl">
-                            <span class="text-xs font-bold text-emerald-700 uppercase">Resumo da Rota Ativa</span>
-                            <h4 class="font-bold text-slate-800 text-lg mt-1">Rota Curitiba Central</h4>
-                            <p class="text-xs text-slate-600 mt-2">• Total de Paradas: <strong>3 Pontos</strong></p>
-                            <p class="text-xs text-slate-600 mt-1">• Distância Estimada: <strong>6.4 km</strong></p>
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+                <h2 class="text-2xl font-bold text-slate-900">Sobre a Equipe / Integrantes</h2>
+                <p class="text-sm text-slate-600">Este projeto foi desenvolvido como parte das atividades acadêmicas, aplicando tecnologia web moderna e integração em nuvem.</p>
+                <div class="border-t border-slate-100 pt-4 space-y-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm">L</div>
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-800">Lincoln de Carvalho Pereira</h3>
+                            <p class="text-xs text-slate-500">Desenvolvimento & Infraestrutura</p>
                         </div>
-                        <button onclick="alert('Rota finalizada com sucesso!')" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold py-2.5 rounded-lg transition">Finalizar Rota Atual</button>
                     </div>
-                    <div class="lg:col-span-2">
-                        <div id="map" class="rounded-xl border border-slate-200 shadow-inner"></div>
-                    </div>
+                    <!-- Caso haja mais integrantes, você pode adicioná-los aqui seguindo o mesmo modelo -->
                 </div>
             </div>
-        </section>
-
+        </div>
     </main>
 
     <!-- Footer -->
-    <footer class="max-w-7xl mx-auto px-4 py-6 text-center text-xs text-slate-400">
-        EcoRota Curitiba • Projeto Integrador Extensionista (PIEx) alinhado à ODS 9.
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400">
+        EcoRota Curitiba • Alinhado à ODS 9 (Indústria, Inovação e Infraestrutura).
     </footer>
 
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        // CONFIGURAÇÃO DO SUPABASE (Já integrada com suas chaves oficiais)
-        const SUPABASE_URL = 'https://dihojkagllujywqpask.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_nm-0nBGAQgyFKkM1RT7Uig_5JLdNQvH';
-        
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        function switchTab(tab) {
-            ['cadastro', 'painel', 'rota'].forEach(t => {
-                document.getElementById('tab-' + t).classList.add('hidden');
-                document.getElementById('btn-' + t).classList.remove('bg-emerald-800', 'text-white');
-                document.getElementById('btn-' + t).classList.add('hover:bg-emerald-600', 'text-emerald-100');
-            });
-            document.getElementById('tab-' + tab).classList.remove('hidden');
-            document.getElementById('btn-' + tab).classList.add('bg-emerald-800', 'text-white');
-            document.getElementById('btn-' + tab).classList.remove('hover:bg-emerald-600', 'text-emerald-100');
-
-            if(tab === 'rota' && window.mapInstance) {
-                window.mapInstance.invalidateSize();
-            }
-        }
-
-        // Função assíncrona para salvar no Supabase
-        async function handleCadastrar(e) {
-            e.preventDefault();
-
-            const responsavel = document.getElementById('responsavel').value;
-            const tipo_gerador = document.getElementById('tipo_gerador').value;
-            const endereco = document.getElementById('endereco').value;
-            const bairro = document.getElementById('bairro').value;
-
-            const materiaisChecked = document.querySelectorAll('input[name="materiais"]:checked');
-            const materiaisArr = Array.from(materiaisChecked).map(cb => cb.value);
-            const materiais = materiaisArr.join(', ');
-
-            const { data, error } = await supabaseClient
-                .from('pontos_coleta')
-                .insert([
-                    { responsavel, tipo_gerador, endereco, bairro, materiais }
-                ]);
-
-            if (error) {
-                console.error('Erro ao salvar:', error);
-                alert('Erro ao cadastrar ponto no banco de dados. Verifique o console.');
-            } else {
-                alert('Ponto de coleta cadastrado e salvo com sucesso no Supabase!');
-                document.getElementById('form-cadastro').reset();
-                switchTab('painel');
-            }
-        }
-
-        window.addEventListener('load', function() {
-            var map = L.map('map').setView([-25.4284, -49.2733], 13);
-            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-                attribution: 'Tiles &copy; Esri'
-            }).addTo(map);
-
-            L.marker([-25.435, -49.290]).addTo(map).bindPopup('<b>Condomínio Solar</b><br>Água Verde');
-            L.marker([-25.418, -49.270]).addTo(map).bindPopup('<b>Comércio Central</b><br>Centro Cívico');
-            L.marker([-25.442, -49.285]).addTo(map).bindPopup('<b>Edifício Araucária</b><br>Batel');
-
-            window.mapInstance = map;
-        });
-    </script>
 </body>
 </html>
